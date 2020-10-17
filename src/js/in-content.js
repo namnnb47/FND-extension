@@ -30,6 +30,7 @@ chrome.extension.onConnect.addListener(popupPort => {
     try {
         for ( var i=0 ; i < articleNodes.snapshotLength; i++ ) {
             const article = articleNodes.snapshotItem(i);
+            console.log(article.textContent)
             const result = document.createElement("div");
             result.id = "data-fake";
             result.innerHTML = Boolean(Math.round(Math.random())) ? "<span class='label label-success'>Fake new: 3%</span>" : "<span class='label label-danger'>Fake new: 95%</span>";
