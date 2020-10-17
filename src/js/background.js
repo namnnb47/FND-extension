@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Perform any ther actions depending on the message
     console.log('background.js - received message from in-content.js:', message);
     // Respond message
-    sendResponse('👍');
+    sendResponse(message);
 });
 
 // Make variables accessible from chrome.extension.getBackgroundPage()

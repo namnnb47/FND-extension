@@ -1,9 +1,9 @@
 /* in-content.js
-*
-* This file has an example on how to communicate with other parts of the extension through a long lived connection (port) and also through short lived connections (chrome.runtime.sendMessage).
-*
-* Note that in this scenario the port is open from the popup, but other extensions may open it from the background page or not even have either background.js or popup.js.
-* */
+ *
+ * This file has an example on how to communicate with other parts of the extension through a long lived connection (port) and also through short lived connections (chrome.runtime.sendMessage).
+ *
+ * Note that in this scenario the port is open from the popup, but other extensions may open it from the background page or not even have either background.js or popup.js.
+ * */
 
 // Extension port to communicate with the popup, also helps detecting when it closes
 let port = null;
@@ -26,6 +26,27 @@ chrome.extension.onConnect.addListener(popupPort => {
     port = popupPort;
     // Perform any logic or set listeners
     sendPortMessage('message from in-content.js');
+    let articleNodes = getElementByXpath("//*[@data-test-id='comment']");
+    try {
+        for ( var i=0 ; i < articleNodes.snapshotLength; i++ ) {
+            const article = articleNodes.snapshotItem(i);
+            const result = document.createElement("div");
+            result.id = "data-fake";
+            result.innerHTML = Boolean(Math.round(Math.random())) ? "<span class='label label-success'>Fake new: 3%</span>" : "<span class='label label-danger'>Fake new: 95%</span>";
+            if (article.lastChild.id === 'data-fake') {
+                article.removeChild(article.lastChild);
+            }   
+            article.appendChild(result);
+        }
+        // let thisNode = articleNodes.iterateNext();
+        // while (thisNode) {
+        //     console.log(thisNode.textContent);
+        //     
+        //     thisNode = articleNodes.iterateNext();
+        // }
+    } catch (e) {
+        alert('Error: Document tree modified during iteration ' + e);
+    }
 });
 
 // Response handler for short lived messages
@@ -34,3 +55,6 @@ const handleBackgroundResponse = response =>
 
 // Send a message to background.js
 chrome.runtime.sendMessage('Message from in-content.js!', handleBackgroundResponse);
+function getElementByXpath(path) {
+    return document.evaluate(path, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+}

@@ -36,6 +36,7 @@
         "verbose": true
     },
     "dependencies": {
+        "css-loader": "^5.0.0",
         "nodemon": "^1.14.12"
     }
 }
