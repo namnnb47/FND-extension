@@ -5,6 +5,9 @@
  * Note that in this scenario the port is open from the popup, but other extensions may open it from the background page or not even have either background.js or popup.js.
  * */
 
+import axios from "axios";
+const url = 'http://35.202.202.155:8888/predict';
+
 // Extension port to communicate with the popup, also helps detecting when it closes
 let port = null;
 
@@ -28,15 +31,15 @@ chrome.extension.onConnect.addListener(popupPort => {
     sendPortMessage('message from in-content.js');
     let articleNodes = getElementByXpath("//*[@data-test-id='comment']");
     try {
-        for ( var i=0 ; i < articleNodes.snapshotLength; i++ ) {
+        for (var i = 0; i < articleNodes.snapshotLength; i++) {
             const article = articleNodes.snapshotItem(i);
-            console.log(article.textContent)
             const result = document.createElement("div");
             result.id = "data-fake";
-            result.innerHTML = Boolean(Math.round(Math.random())) ? "<span class='label label-success'>Fake new: 3%</span>" : "<span class='label label-danger'>Fake new: 95%</span>";
+            let res = await axios.post(url, article.textContent);
+            result.innerHTML = Boolean(res=='fake') ? "<span class='label label-success'>True</span>" : "<span class='label label-danger'>Fake</span>";
             if (article.lastChild.id === 'data-fake') {
                 article.removeChild(article.lastChild);
-            }   
+            }
             article.appendChild(result);
         }
         // let thisNode = articleNodes.iterateNext();
