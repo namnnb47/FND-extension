@@ -6,7 +6,7 @@
  * */
 
 import axios from "axios";
-const url = 'https://vayvonthechap.com:8080/predict';
+const url = 'http://35.202.202.155:8888/predict';
 
 // Extension port to communicate with the popup, also helps detecting when it closes
 let port = null;
@@ -31,28 +31,16 @@ chrome.extension.onConnect.addListener(popupPort => {
     sendPortMessage('message from in-content.js');
     let articleNodes = getElementByXpath("//*[@data-test-id='comment']");
     try {
-        // articleNodes.snapshotLength
-        for (var i = 0; i < 30; i++) {
+        for (var i = 0; i < articleNodes.snapshotLength; i++) {
             const article = articleNodes.snapshotItem(i);
             const result = document.createElement("div");
             result.id = "data-fake";
-            axios.post(url, {text: article.textContent}).then(res => {
-                console.log(res);
-                const pred = Math.abs(Number(res.data.result))
-                if(pred > 1){
-                    result.innerHTML = `<span class='label label-warning'>Noise</span>`
-                }else if (pred > 0.5) {
-                    result.innerHTML = `<span class='label label-danger'>Fake ${pred*100} %</span>`
-                }else if(pred < 0.5 ) {
-                    result.innerHTML = `<span class='label label-success'>True ${(1-pred)*100} %</span>`
-                }
-
-            });
+            let res = await axios.post(url, article.textContent);
+            result.innerHTML = Boolean(res=='fake') ? "<span class='label label-success'>True</span>" : "<span class='label label-danger'>Fake</span>";
             if (article.lastChild.id === 'data-fake') {
                 article.removeChild(article.lastChild);
             }
             article.appendChild(result);
-            
         }
         // let thisNode = articleNodes.iterateNext();
         // while (thisNode) {
