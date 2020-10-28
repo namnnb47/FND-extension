@@ -36,6 +36,7 @@
         "verbose": true
     },
     "dependencies": {
+        "axios": "^0.20.0",
         "css-loader": "^5.0.0",
         "nodemon": "^1.14.12"
     }
