@@ -8,6 +8,7 @@
  */
 
 // A sample object that will be exposed further down and used on popup.js
+let user_signed_in = false;
 const sampleBackgroundGlobal = {
     message: 'This object comes from background.js'
 };
@@ -18,7 +19,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log('background.js - received message from in-content.js:', message);
     // Respond message
     sendResponse(message);
+    if (request.message === 'is_user_signed_in') {
+        sendResponse({
+            message: 'success',
+            payload: user_signed_in
+        });
+    } else if (request.message === 'sign_out') {
+        user_signed_in = false;
+        sendResponse({ message: 'success' });
+    } else if (request.message === 'sign_in') {
+        user_signed_in = true;
+        sendResponse({ message: 'success' });
+    }
+
+    return true;
 });
+
 
 // Make variables accessible from chrome.extension.getBackgroundPage()
 window.sampleBackgroundGlobal = sampleBackgroundGlobal;
