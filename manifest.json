@@ -20,11 +20,11 @@
         }
     ],
     "background": {
-        "scripts": ["background.js"],
-        "persistent": false
+        "scripts": ["background.js"]
+   
     },
-    "content_security_policy":
-        "script-src 'self' 'unsafe-eval'; object-src 'self'; img-src * data: 'self' 'unsafe-eval'",
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.google.com; object-src 'self'"
+    ,
     "offline_enabled": true,
     "permissions": ["tabs", "<all_urls>", "activeTab"]
 }
