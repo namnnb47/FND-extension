@@ -42,10 +42,15 @@ chrome.extension.onConnect.addListener(popupPort => {
                 console.log(res);
                 const pred = Math.abs(Number(res.data.result))
                 if(pred > 1){
-                    result.innerHTML = `<span class='label label-warning'>Noise</span>`
-                }else if (pred > 0.5) {
+                    result.innerHTML = `<span class='label label-warning'>Noise - This is not political new</span>`
+                }
+                else if (pred < 0) {
+                    result.innerHTML = `<span class='label label-danger'>Noise - This text is too short</span>`
+                }
+                else if (pred > 0.5 && pred <= 1) {
                     result.innerHTML = `<span class='label label-danger'>Fake ${pred*100} %</span>`
-                }else if(pred < 0.5 ) {
+                }
+                else if(pred < 0.5 && pred >= 0 ) {
                     result.innerHTML = `<span class='label label-success'>True ${(1-pred)*100} %</span>`
                 }
 
