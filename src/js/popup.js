@@ -9,67 +9,76 @@
  *
  */
 
+// This port enables a long-lived connection to in-content.js
+var port = null;
+
+// Send messages to the open port
+const sendPortMessage = message => port && port.postMessage(message);
+
 // Start the popup script, this could be anything from a simple script to a webapp
 const initPopupScript = () => {
-    // Access the background window object
-    const backgroundWindow = chrome.extension.getBackgroundPage();
-    // Do anything with the exposed variables from background.js
-    console.log(backgroundWindow.sampleBackgroundGlobal);
+  console.log('initPopup')
 
-    // This port enables a long-lived connection to in-content.js
-    let port = null;
+  // Access the background window object
+  const backgroundWindow = chrome.extension.getBackgroundPage();
+  // Do anything with the exposed variables from background.js
+  console.log(backgroundWindow.sampleBackgroundGlobal);
 
-    // Send messages to the open port
-    const sendPortMessage = message => port.postMessage(message);
 
-    // Find the current active tab
-    const getTab = () =>
-        new Promise(resolve => {
-            chrome.tabs.query(
-                {
-                    active: true,
-                    currentWindow: true
-                },
-                tabs => resolve(tabs[0])
-            );
-        });
-
-    // Handle port messages
-    const messageHandler = message => {
-        console.log('popup.js - received message:', message);
-    };
-
-    // Find the current active tab, then open a port to it
-    getTab().then(tab => {
-        // Connects to tab port to enable communication with inContent.js
-        port = chrome.tabs.connect(tab.id, { name: 'chrome-extension-template' });
-        // Set up the message listener
-        port.onMessage.addListener(messageHandler);
-        // Send a test message to in-content.js
-        sendPortMessage('Message from popup!');
+  // Find the current active tab
+  const getTab = () =>
+    new Promise(resolve => {
+      chrome.tabs.query(
+        {
+          active: true,
+          currentWindow: true
+        },
+        tabs => resolve(tabs[0])
+      );
     });
+
+  // Handle port messages
+  const messageHandler = message => {
+    console.log('popup.js - received message:', message);
+  };
+
+  // Find the current active tab, then open a port to it
+  getTab().then(tab => {
+    // Connects to tab port to enable communication with inContent.js
+    port = chrome.tabs.connect(tab.id, { name: 'chrome-extension-template' });
+    // Set up the message listener
+    port.onMessage.addListener(messageHandler);
+    // Send a test message to in-content.js
+    sendPortMessage({ message: 'Message from popup!' });
+  });
+
 };
 
 // Fire scripts after page has loaded
 document.addEventListener('DOMContentLoaded', initPopupScript);
-function onWindowLoad() {
+const onWindowLoad = () => {
+  console.log('onwindowload')
 
-    var message = document.querySelector('#message');
-  
-    chrome.tabs.executeScript(null, {
-      file: "getPagesSource.js"
-    }, function() {
-      // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-      if (chrome.runtime.lastError) {
+  var message = document.querySelector('#message');
+
+  chrome.tabs.executeScript(null, {
+    file: "getPagesSource.js"
+  }, function () {
+    // If you try and inject into an extensions page or the webstore/NTP you'll get an error
+    if (chrome.runtime.lastError) {
+      if (message) {
         message.innerText = 'There was an error injecting script : \n' + chrome.runtime.lastError.message;
       }
-    });
-  
-  }
-  
-  window.onload = onWindowLoad;
-  chrome.runtime.onMessage.addListener(function(request, sender) {
-    if (request.action == "getSource") {
+    }
+  });
+
+}
+
+window.onload = onWindowLoad;
+chrome.runtime.onMessage.addListener(function (request, sender) {
+  if (request.action == "getSource") {
+    if (message) {
       message.innerText = request.source;
     }
-  });  
+  }
+});  
