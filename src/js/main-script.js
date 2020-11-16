@@ -1,3 +1,4 @@
+// const popup = require('./popup')
 const cookie = require('./cookie')
 
 document.querySelector('#sign_out').addEventListener('click', () => {
@@ -8,6 +9,10 @@ document.querySelector('#sign_out').addEventListener('click', () => {
     // });
 
     cookie.setCookie('user', null, 0)
+    // popup.sendPortMessage({
+    //     action: 'sign-out',
+    //     user: null,
+    // })
     console.log('SIGN OUT')
     
     window.location.replace('popup.html');

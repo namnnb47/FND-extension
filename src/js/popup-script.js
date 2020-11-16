@@ -3,6 +3,7 @@ require('firebase/auth');
 require('firebase/database');
 var firebaseui = require('firebaseui');
 const cookie = require('./cookie')
+// const popup = require('./popup')
 
 const firebaseConfig = {
     apiKey: "AIzaSyBkDv_LAXmebzcMyh9KMC3qi8NoD8Z16rM",
@@ -27,6 +28,10 @@ const uiConfig = {
             console.log('SIGN IN SUCCESS', authResult)
 
             cookie.setCookie('user', authResult, 1)
+            // popup.sendPortMessage({
+            //     action: 'sign-in',
+            //     user: authResult,
+            // })
 
             // chrome.runtime.sendMessage({ message: 'sign_in' },  (response)  => {
             //     console.log(response)

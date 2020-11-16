@@ -6,6 +6,8 @@
  * */
 
 import axios from "axios";
+const cookie = require('./cookie');
+
 //port
 const url = 'https://vayvonthechap.com:8080/predict';
 
@@ -16,7 +18,81 @@ let port = null;
 const sendPortMessage = data => port.postMessage(data);
 
 // Handle incoming popup messages
-const popupMessageHandler = message => console.log('in-content.js - message from popup:', message);
+const popupMessageHandler = (message) => {
+    console.log('in-content.js - message from popup:', message);
+    if (message) {
+        if (message.action === 'sign-in') {
+            cookie.setCookie('user', message.user, 1)
+        }
+        if (message.action === 'sign-out') {
+            cookie.setCookie('user', null, 0)
+        }
+    }
+}
+
+var articleNodesList = []
+
+const handleScroll = () => {
+    console.log('scrolling .. ')
+    const val = document.body.scrollTop || document.documentElement.scrollTop
+
+    articleNodesList.map(articleNode => {
+        if (!articleNode.isLoading && !articleNode.isLoaded) {
+            const article = articleNode.articleNode
+            if (article.getBoundingClientRect().top < val) {
+                articleNode.isLoading = true
+                const result = document.createElement("div");
+                result.id = "data-fake";
+                axios.post(url, { text: article.textContent }).then(res => {
+                    const pred = Math.abs(Number(res.data))
+
+                    if (pred > 1) {
+                        result.innerHTML = `<span class='label label-warning'>Noise - This is not political news ${(pred - 1) * 100} %</span>`
+                    }
+                    else if (pred < 0) {
+                        result.innerHTML = `<span class='label label-warning'>Noise - This text is too short</span>`
+                    }
+                    else if (pred > 0.5 && pred <= 1) {
+                        result.innerHTML = `<span class='label label-danger'>Fake ${pred * 100} %</span>`
+                    }
+                    else if (pred < 0.5 && pred >= 0) {
+                        result.innerHTML = `<span class='label label-success'>True ${(1 - pred) * 100} %</span>`
+                    }
+                    console.log({ pred, innerHTML: result.innerHTML })
+                    if (article.lastChild.id === 'data-fake') {
+                        article.removeChild(article.lastChild);
+                    }
+                    article.appendChild(result);
+                    articleNode.isLoading = false
+                    articleNode.isLoaded = true
+                });
+            }
+        }
+    })
+}
+
+const setUpArticles = () => {
+    console.log('setUpArticles')
+
+    var articleNodes = getElementByXpath("//*[@data-test-id='comment']");
+    articleNodesList = []
+    for (var i = 0; i < articleNodes.snapshotLength; i++) {
+        articleNodesList.push({
+            isLoaded: false,
+            isLoading: false,
+            articleNode: articleNodes.snapshotItem(i),
+        })
+    }
+
+}
+
+window.onload = () => {
+    setUpArticles()
+}
+
+window.onscroll = () => {
+    handleScroll()
+}
 
 // Start scripts after setting up the connection to popup]
 chrome.extension.onConnect.addListener(popupPort => {
@@ -30,37 +106,41 @@ chrome.extension.onConnect.addListener(popupPort => {
     port = popupPort;
     // Perform any logic or set listeners
     sendPortMessage('message from in-content.js');
-    let articleNodes = getElementByXpath("//*[@data-test-id='comment']");
-    try {
-        
-        // articleNodes.snapshotLength
-        for (var i = 0; i < 30; i++) {
-            const article = articleNodes.snapshotItem(i);
-            const result = document.createElement("div");
-            result.id = "data-fake";
-            axios.post(url, {text: article.textContent}).then(res => {
-                console.log(res);
-                const pred = Math.abs(Number(res.data.result))
-                if(pred > 1){
-                    result.innerHTML = `<span class='label label-warning'>Noise - This is not political new</span>`
-                }
-                else if (pred < 0) {
-                    result.innerHTML = `<span class='label label-danger'>Noise - This text is too short</span>`
-                }
-                else if (pred > 0.5 && pred <= 1) {
-                    result.innerHTML = `<span class='label label-danger'>Fake ${pred*100} %</span>`
-                }
-                else if(pred < 0.5 && pred >= 0 ) {
-                    result.innerHTML = `<span class='label label-success'>True ${(1-pred)*100} %</span>`
-                }
 
-            });
-            if (article.lastChild.id === 'data-fake') {
-                article.removeChild(article.lastChild);
-            }
-            article.appendChild(result);
-            
-        }
+    setUpArticles()
+
+
+    try {
+
+        // articleNodes.snapshotLength
+        // for (var i = 0; i < 10; i++) {
+        //     const article = articleNodes.snapshotItem(i);
+        //     const result = document.createElement("div");
+        //     result.id = "data-fake";
+        //     axios.post(url, { text: article.textContent }).then(res => {
+        //         console.log({res});
+        //         const pred = Math.abs(Number(res.data))
+
+        //         if (pred > 1) {
+        //             result.innerHTML = `<span class='label label-warning'>Noise - This is not political news ${(pred - 1) * 100} %</span>`
+        //         }
+        //         else if (pred < 0) {
+        //             result.innerHTML = `<span class='label label-warning'>Noise - This text is too short</span>`
+        //         }
+        //         else if (pred > 0.5 && pred <= 1) {
+        //             result.innerHTML = `<span class='label label-danger'>Fake ${pred * 100} %</span>`
+        //         }
+        //         else if (pred < 0.5 && pred >= 0) {
+        //             result.innerHTML = `<span class='label label-success'>True ${(1 - pred) * 100} %</span>`
+        //         }
+        //         console.log({pred, innerHTML: result.innerHTML})
+        //         if (article.lastChild.id === 'data-fake') {
+        //             article.removeChild(article.lastChild);
+        //         }
+        //         article.appendChild(result);
+        //     });
+
+        // }
         // let thisNode = articleNodes.iterateNext();
         // while (thisNode) {
         //     console.log(thisNode.textContent);
@@ -78,6 +158,7 @@ const handleBackgroundResponse = response =>
 
 // Send a message to background.js
 chrome.runtime.sendMessage('Message from in-content.js!', handleBackgroundResponse);
+
 function getElementByXpath(path) {
     return document.evaluate(path, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 }
