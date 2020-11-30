@@ -15,5 +15,12 @@ document.querySelector('#sign_out').addEventListener('click', () => {
     // })
     console.log('SIGN OUT')
     
-    window.location.replace('popup.html');
+    window.location.replace('login.html');
+});
+console.log("tes")
+var email =  localStorage.getItem("EMAIL");
+document.getElementById("email").innerHTML=email;
+document.getElementById("statistic").addEventListener("click", function(e){
+    e.preventDefault();
+    window.open('https://sub.vayvonthechap.com:9000', '_blank');
 });

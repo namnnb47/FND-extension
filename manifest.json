@@ -10,11 +10,11 @@
     },
     "browser_action": {
         "default_title": "Boilerplate popup!",
-        "default_popup": "popup.html"
+        "default_popup": "login.html"
     },
     "content_scripts": [
         {
-            "matches": ["<all_urls>"],
+            "matches": ["*://www.reddit.com/r/politics/comments/*"],
             "js": ["in-content.js"],
             "css": ["style.css"]
         }
@@ -23,8 +23,8 @@
         "scripts": ["background.js"]
    
     },
-    "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.google.com; object-src 'self'"
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://ajax.googleapis.com; object-src 'self'"
     ,
     "offline_enabled": true,
-    "permissions": ["tabs", "<all_urls>", "activeTab"]
+    "permissions": ["tabs", "https://www.reddit.com/*", "activeTab"]
 }

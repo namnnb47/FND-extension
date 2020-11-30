@@ -9,6 +9,22 @@
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: 0.25em;
+}button#children {
+    padding: 10px 10px;
+    font-size: 15px;
+    align-items: center;
+    background: #18BC9C;
+    border-radius: 5px;
+    display: block;
+    justify-content: center;
+    margin: 3px;
+    box-sizing: border-box;
+    height: 100%;
+    transition: background .5s ease;
+    color: #fff;
+}
+#user-info{
+    text-align: center;
 }
 a.label:hover,
 a.label:focus {
