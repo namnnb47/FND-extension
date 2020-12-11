@@ -5,7 +5,7 @@
   <script src="popup-init.js"></script>
 
   <style>
-    @import url(https://fonts.googleapis.com/css?family=Arial:300);
+    @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
     .login-page {
       width: 360px;
@@ -14,20 +14,20 @@
     }
 
     .form {
-      background-color: #FD7E14;
       position: relative;
       z-index: 1;
+      background: #FFFFFF;
       max-width: 360px;
-      margin: 0 auto 0;
+      margin: 0 auto 100px;
       padding: 45px;
       text-align: center;
       box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
     }
 
     .form input {
-      background-color: #ffffff;
-      font-family: "Arial", sans-serif;
+      font-family: "Roboto", sans-serif;
       outline: 0;
+      background: #f2f2f2;
       width: 100%;
       border: 0;
       margin: 0 0 15px;
@@ -37,7 +37,7 @@
     }
 
     .form button {
-      font-family: "Arial", sans-serif;
+      font-family: "Roboto", sans-serif;
       text-transform: uppercase;
       outline: 0;
       background: #4CAF50;
@@ -59,12 +59,12 @@
 
     .form .message {
       margin: 15px 0 0;
-      color: #ffffff;
+      color: #b3b3b3;
       font-size: 12px;
     }
 
     .form .message a {
-      color: #ffffff;
+      color: #4CAF50;
       text-decoration: none;
     }
 
@@ -114,38 +114,27 @@
     }
 
     body {
-      background: #ffffff;
+      background: #76b852;
       /* fallback for old browsers */
-      /* background: -webkit-linear-gradient(right, #f2f2f2, #FD7E14);
-      background: -moz-linear-gradient(right, #f2f2f2, #FD7E14);
-      background: -o-linear-gradient(right, #f2f2f2, #FD7E14);
-      background: linear-gradient(to left, #f2f2f2, #FD7E14); */
-      font-family: "Arial", sans-serif;
-      /* -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale; */
-    }
-
-    img {
-      padding: 5px;
-      height: 60px;
-      width: 180px;
-      display: left;
-      margin-left: auto;
-      margin-right: auto;
+      background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+      background: -moz-linear-gradient(right, #76b852, #8DC26F);
+      background: -o-linear-gradient(right, #76b852, #8DC26F);
+      background: linear-gradient(to left, #76b852, #8DC26F);
+      font-family: "Roboto", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
   </style>
 </head>
 
 <body>
-  <img src="logo_fpt.png" alt="logo-fpt" width="300" height="120">
-
   <div class="login-page">
     <div class="form">
       <form class="login-form">
-        <input id="username" type="text" placeholder="email" />
-        <input id="password" type="password" placeholder="password" />
+        <input id="username" type="text" placeholder="username"/>
+        <input id="password" type="password" placeholder="password"/>
         <button id="loginBtn">login</button>
-        <p class="message">Not registered? <a id="register" style="text-decoration: underline;" href="#">Create an account</a></p>
+        <p class="message">Not registered? <a id="register" href="#">Create an account</a></p>
 
 
       </form>
