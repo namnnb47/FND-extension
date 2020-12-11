@@ -14,6 +14,18 @@ document.querySelector('#sign_out').addEventListener('click', () => {
     //     user: null,
     // })
     console.log('SIGN OUT')
-    
-    window.location.replace('popup.html');
+    localStorage.removeItem("EMAIL");
+    localStorage.removeItem("TOKEN");
+    chrome.tabs.getSelected(null, function(tab){
+        var code = 'window.location.reload();';
+        chrome.tabs.executeScript(tab.id, {code: code});
+    });
+    window.location.replace('login.html');
+});
+console.log("tes")
+var email =  localStorage.getItem("EMAIL");
+document.getElementById("email").innerHTML=email;
+document.getElementById("statistic").addEventListener("click", function(viewStatistic){
+    viewStatistic.preventDefault();
+    window.open('https://sub.vayvonthechap.com:9000', '_blank');
 });

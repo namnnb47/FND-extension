@@ -11,9 +11,9 @@
 
 // This port enables a long-lived connection to in-content.js
 var port = null;
-
+// var arr ={message,email};
 // Send messages to the open port
-const sendPortMessage = message => port && port.postMessage(message);
+const sendPortMessage = arr => port && port.postMessage(arr);
 
 // Start the popup script, this could be anything from a simple script to a webapp
 const initPopupScript = () => {
@@ -49,7 +49,12 @@ const initPopupScript = () => {
     // Set up the message listener
     port.onMessage.addListener(messageHandler);
     // Send a test message to in-content.js
-    sendPortMessage({ message: 'Message from popup!' });
+    arr={
+      message: localStorage.getItem("TOKEN"),
+      email: localStorage.getItem("EMAIL")
+    }
+    sendPortMessage(arr);
+    console.log("popup.js "+ arr);
   });
 
 };

@@ -45,6 +45,9 @@
         "css-loader": "^5.0.0",
         "firebase": "^7.24.0",
         "firebaseui": "^4.7.1",
-        "nodemon": "^1.14.12"
+        "jQuery": "^1.7.4",
+        "nodemon": "^1.14.12",
+        "react": "^17.0.1",
+        "request": "^2.88.2"
     }
 }

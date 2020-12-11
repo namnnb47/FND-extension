@@ -13,6 +13,9 @@ module.exports = {
         'welcome-script': './src/js/welcome-script.js',
         'cookie': './src/js/cookie.js',
         'popup': './src/js/popup.js',
+        'login': './src/js/login.js'
+  
+    
 
 
     },
